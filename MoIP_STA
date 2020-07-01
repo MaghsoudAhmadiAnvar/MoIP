@@ -2,7 +2,7 @@
  * Owned and Created by: Magsoud Ahmadi Anvar
  * 2020 June 24 Wednesday
  *
- * // Below section work as STA mode 
+ * // STA mode 
  */
 //* 
 #include <ESP8266WiFi.h>        // Include the Wi-Fi library
