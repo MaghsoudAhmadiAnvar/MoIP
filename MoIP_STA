@@ -1,0 +1,144 @@
+/* MoIP Project
+ * Owned and Created by: Magsoud Ahmadi Anvar
+ * 2020 June 24 Wednesday
+ *
+ * // Below section work as STA mode 
+ */
+//* 
+#include <ESP8266WiFi.h>        // Include the Wi-Fi library
+#include <WiFiClient.h>
+ 
+//ESP Web Server Library to host a web page
+#include <ESP8266WebServer.h>
+ 
+/* 
+//Static IP address configuration
+IPAddress staticIP(192, 168, 43, 90); //ESP static ip
+IPAddress gateway(192, 168, 43, 1);   //IP Address of your WiFi Router (Gateway)
+IPAddress subnet(255, 255, 255, 0);  //Subnet mask
+IPAddress dns(8, 8, 8, 8);  //DN
+ */
+ 
+const char* deviceName = "MoIP";
+ 
+//Declare a global object variable from the ESP8266WebServer class.
+ESP8266WebServer server(80); //Server on port 80
+ 
+//===============================================================
+// This routine is executed when you open its IP in browser
+//===============================================================
+void handleRoot() {
+ Serial.println("You called root page");
+ server.send(200, "text/html", SendHTML()); //Send web page
+}
+ 
+void handleLEDon() { 
+ Serial.println("LED on page");
+ digitalWrite(LED_BUILTIN,LOW); //LED is connected in reverse
+ server.send(200, "text/html", "LED is ON"); //Send ADC value only to client ajax request
+}
+ 
+void handleLEDoff() { 
+ Serial.println("LED off page");
+ digitalWrite(LED_BUILTIN,HIGH); //LED off
+ server.send(200, "text/html", "LED is OFF"); //Send ADC value only to client ajax request
+}
+ 
+//---------------------------------------------------------------
+//Our HTML webpage contents
+String SendHTML(void){
+  String html_page="<!DOCTYPE html>\n";
+  html_page += "<html>\n";
+  html_page += "<body>\n";
+  html_page += "<center>\n";
+  html_page += "<h1>WiFi LED on off demo: 1</h1><br>\n";
+  html_page += "Ciclk to turn <a href=\"ledOn\">LED ON</a><br>\n";
+  html_page += "Ciclk to turn <a href=\"ledOff\">LED OFF</a><br>\n";
+  html_page += "<hr>\n";
+  html_page += "<a href=\"https://circuits4you.com\">circuits4you.com</a>\n";
+  html_page += "</center>\n";
+  
+  html_page += "</body>\n";
+  html_page += "</html>\n";
+  return html_page;
+}
+//---------------------------------------------------------------
+
+//==============================================================
+//                  SETUP
+//==============================================================
+
+uint8_t NetSel = 12;//GPIO12 pin as an Network Selection
+
+char* ssid     = "Ma";         // The SSID (name) of the Wi-Fi network you want to connect to
+char* password = "Maa94136";     // The password of the Wi-Fi network
+//const char* ssid     = "DELSA9E72F0";         // The SSID (name) of the Wi-Fi network you want to connect to
+//const char* password = "MagNet1994";     // The password of the Wi-Fi network
+//char ssid[] = "Ma";      //  your network SSID (name)
+//char pass[] = "Maa94136";   // your network password
+
+void WiFi_Net_Conn(char* ssid, char* password){
+  
+  WiFi.hostname(deviceName);      // DHCP Hostname (useful for finding device for static lease)
+  //WiFi.config(staticIP, subnet, gateway, dns);
+  WiFi.begin(ssid, password);             // Connect to the network
+  Serial.print("Connecting to ");
+  Serial.print(ssid); Serial.println(" ...");
+
+  WiFi.mode(WIFI_STA); //WiFi mode station (connect to wifi router only
+
+  int i = 0;
+  while (WiFi.status() != WL_CONNECTED) { // Wait for the Wi-Fi to connect
+    delay(1000);
+    Serial.print(++i); Serial.print(' ');
+  }
+
+  Serial.println('\n');
+  Serial.println("Connection established!");  
+  Serial.print("IP address:\t");
+  Serial.println(WiFi.localIP());         // Send the IP address of the ESP8266 to the computer  
+  Serial.print("ESP8266 Module MAC address:\t");
+  Serial.println(WiFi.macAddress());  // Send the MAC address of the ESP8266 
+}
+
+void setup() {
+  
+  //As Test
+  pinMode(LED_BUILTIN, OUTPUT);     // Initialize the LED_BUILTIN pin as an output 
+  //Power on LED_BUILTIN state off
+  digitalWrite(LED_BUILTIN,HIGH);
+  //pinMode(12, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
+ 
+  WiFi.disconnect();  //Prevent connecting to wifi based on previous configuration
+  WiFi.hostname(deviceName);      // DHCP Hostname (useful for finding device for static lease)
+  
+
+  //As Network Selection
+  pinMode(NetSel, INPUT);     // Initialize the GPIO0 pin as an input
+  
+  Serial.begin(115200);         // Start the Serial communication to send messages to the computer
+  delay(10);
+  Serial.println('\n');
+
+  if(digitalRead(NetSel)){
+    ssid     = "Ma";         // The SSID (name) of the Wi-Fi network you want to connect to
+    password = "Maa94136";     // The password of the Wi-Fi network
+  }else{
+    ssid     = "DELSA9E72F0";         // The SSID (name) of the Wi-Fi network you want to connect to
+    password = "MagNet1994";     // The password of the Wi-Fi network
+  }
+  WiFi_Net_Conn(ssid, password);//WiFi Network Connection
+ 
+  server.on("/", handleRoot);      //Which routine to handle at root location. This is display page
+  server.on("/ledOn", handleLEDon); //as Per  <a href="ledOn">, Subroutine to be called
+  server.on("/ledOff", handleLEDoff);
+ 
+  server.begin();                  //Start server
+  Serial.println("HTTP server started");
+}
+
+void loop() {
+  server.handleClient();          //Handle client requestslWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
+  
+}
+//*/
