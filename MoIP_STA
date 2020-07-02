@@ -70,12 +70,8 @@ String SendHTML(void){
 
 uint8_t NetSel = 12;//GPIO12 pin as an Network Selection
 
-char* ssid     = "Ma";         // The SSID (name) of the Wi-Fi network you want to connect to
-char* password = "Maa94136";     // The password of the Wi-Fi network
-//const char* ssid     = "DELSA9E72F0";         // The SSID (name) of the Wi-Fi network you want to connect to
-//const char* password = "MagNet1994";     // The password of the Wi-Fi network
-//char ssid[] = "Ma";      //  your network SSID (name)
-//char pass[] = "Maa94136";   // your network password
+char* ssid     = "SSID";         // The SSID (name) of the Wi-Fi network you want to connect to
+char* password = "password";     // The password of the Wi-Fi network
 
 void WiFi_Net_Conn(char* ssid, char* password){
   
@@ -121,11 +117,11 @@ void setup() {
   Serial.println('\n');
 
   if(digitalRead(NetSel)){
-    ssid     = "Ma";         // The SSID (name) of the Wi-Fi network you want to connect to
-    password = "Maa94136";     // The password of the Wi-Fi network
+    ssid     = "SSID1";         // The SSID (name) of the Wi-Fi network you want to connect to
+    password = "password";     // The password of the Wi-Fi network
   }else{
-    ssid     = "DELSA9E72F0";         // The SSID (name) of the Wi-Fi network you want to connect to
-    password = "MagNet1994";     // The password of the Wi-Fi network
+    ssid     = "SSID2";         // The SSID (name) of the Wi-Fi network you want to connect to
+    password = "password";     // The password of the Wi-Fi network
   }
   WiFi_Net_Conn(ssid, password);//WiFi Network Connection
  
